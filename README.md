@@ -1,6 +1,9 @@
 # sni-scanner
 Fastest Server Name Indication(SNI) proxy scanner.
 
+Travis CI:
+[![Build Status](https://travis-ci.com/mengskysama/sni-scanner.svg?branch=master)](https://travis-ci.org/mengskysama/sni-scanner)
+
 ## Notice
 * Scan will use lot's of Network resource, setting a suitable thread num is important.
 * most of VPS / Server provider monitor scanner behavior.
