@@ -1,9 +1,16 @@
-# sni-scaner
-Fastest Server Name Indication(SNI) proxy scaner
+# sni-scanner
+Fastest Server Name Indication(SNI) proxy scanner.
 
-# Usage
+## Notice
+* Scan will use lot's of Network resource, setting a suitable thread num is important.
+* most of VPS / Server provider monitor scanner behavior.
+
+## Usage
 ```
-echo '1.1.1.1/24' > cn.txt
-go run sni.go -h
-go run sni.go -t https://www.baidu.com -f cn.txt -d 1500 > res.log
+go build
+echo '1.1.1.1/24' > ip.txt
+go run main.go -t https://www.baidu.com -f ip.txt -t 1000
+
+// more help info
+go run main.go -h
 ```
