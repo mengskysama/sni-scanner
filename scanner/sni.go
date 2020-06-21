@@ -2,7 +2,6 @@ package scanner
 
 import (
 	"context"
-	"crypto/tls"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -24,6 +23,7 @@ var (
 
 const (
 	dialTimeout      = time.Second * 3
+	detectReqTimeout = time.Second * 5
 	handshakeMinSize = 512
 )
 
@@ -67,6 +67,7 @@ func FastDetect(sniProxy string) bool {
 		return false
 	}
 
+	_ = conn.SetDeadline(time.Now().Add(detectReqTimeout))
 	_, err = conn.Write(payload)
 	if err != nil {
 		_ = conn.Close()
@@ -84,7 +85,6 @@ func FastDetect(sniProxy string) bool {
 
 func Detect(sniProxy, targetURL string) bool {
 	transport := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: false},
 		DialContext: func(ctx context.Context, network, addr string) (conn net.Conn, err error) {
 			c, err := net.DialTimeout(network, sniProxy, dialTimeout)
 			if err != nil {
@@ -93,7 +93,10 @@ func Detect(sniProxy, targetURL string) bool {
 			return c, nil
 		},
 	}
-	client := http.Client{Transport: transport}
+	client := http.Client{
+		Transport: transport,
+		Timeout: detectReqTimeout,
+	}
 	req, _ := http.NewRequest("GET", targetURL, nil)
 	req.Header.Set("User-Agent", "Mozilla/5.0")
 	_, err := client.Do(req)
